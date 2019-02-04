@@ -1,8 +1,8 @@
 #
 # Copy and run this in the OpenSSL directory for MIPS compatible OpenSSL stack
 #
-export PATH=/home/default/Public/ToolChains/ddwrt/4.1.0-uclibc-0.9.28/bin/:$PATH
-export CC=/home/default/Public/ToolChains/ddwrt/4.1.0-uclibc-0.9.28/bin/mipsel-linux-gcc
+export PATH=~/devel/buildroot/output/host/bin/:$PATH
+export CC=~/devel/buildroot/output/host/bin/mips-buildroot-linux-gcc
 
 cd ../openssl
 make clean

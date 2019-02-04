@@ -19,7 +19,7 @@ limitations under the License.
 
 #include "ILibParsers.h"
 
-#if !defined(WIN32) 
+#if !defined(WIN32)
 #define __fastcall
 #endif
 
@@ -97,7 +97,7 @@ void BCRYPT_FINAL(char *h, BCRYPT_CTX* ctx);
 
 #else
 #include "microstack/nossl/md5.h"
-#include "microstack/nossl/SHA.h"
+#include "microstack/nossl/sha.h"
 #include "microstack/nossl/sha1.h"
 
 #define SHA256_CTX SHA256Context
@@ -184,10 +184,10 @@ void  __fastcall util_savekeys(SSL* ssl);
 // Display only
 #ifdef ANDROID
 #include <android/log.h>
-#define MSG(...)   __android_log_print(ANDROID_LOG_DEBUG, "MeshAgent", __VA_ARGS__); 
+#define MSG(...)   __android_log_print(ANDROID_LOG_DEBUG, "MeshAgent", __VA_ARGS__);
 #elif NACL
 #include "chrome/nacl.h"
-#define MSG(...)  ni_log(__VA_ARGS__); 
+#define MSG(...)  ni_log(__VA_ARGS__);
 #else
 #define MSG(...) printf(__VA_ARGS__);fflush(NULL)
 #endif

@@ -18,7 +18,7 @@
 #		eg: make linux ARCHID=6 JPEGVER=v80
 #
 #
-# To build for 32 bit on 64 bit linux 
+# To build for 32 bit on 64 bit linux
 #  sudo apt-get install linux-libc-dev:i386 libc6-dev-i386 libjpeg62-dev:i386
 #
 # To install ARM Cross Compiler for Raspberry PI
@@ -30,7 +30,7 @@
 #   make linux ARCHID=6 DEBUG=1             # Linux x86 64 bit, with debug symbols and automated crash handling
 #
 # Compiling lib-turbojpeg from source, using libjpeg-turbo 1.4.2
-#  64 bit JPEG8  -> ./configure --with-jpeg8 
+#  64 bit JPEG8  -> ./configure --with-jpeg8
 #  64 bit JPEG62 -> ./configure
 #  32 bit JPEG8  -> ./configure --with-jpeg8 --host i686-pc-linux-gnu CFLAGS='-O3 -m32' LDFLAGS=-m32
 #  32 bit JPEG62 -> ./configure --host i686-pc-linux-gnu CFLAGS='-O3 -m32' LDFLAGS=-m32
@@ -55,7 +55,8 @@
 #	make macos ARCHID=16					# Mac OS x86 64 bit
 #   make linux ARCHID=5						# Linux x86 32 bit
 #   make linux ARCHID=6						# Linux x86 64 bit
-#   make linux ARCHID=7						# Linux MIPS
+#   make linux ARCHID=7						# Linux MIPSel
+#		make linux ARCHID=8						# Linux MIPS
 #   make linux ARCHID=9						# Linux ARM 32 bit
 #   make linux ARCHID=13					# Linux ARM 32 bit PogoPlug
 #   make linux ARCHID=15					# Linux x86 32 bit POKY
@@ -89,7 +90,8 @@ MESH_VER = 194
 EXENAME = meshagent
 
 # Cross-compiler paths
-PATH_MIPS = ../ToolChains/ddwrt/3.4.6-uclibc-0.9.28/bin/
+#PATH_MIPS = ../ToolChains/ddwrt/3.4.6-uclibc-0.9.28/bin/
+PATH_MIPS = ~/devel/buildroot/output/host/bin/
 PATH_ARM5 = ../ToolChains/LinuxArm/bin/
 PATH_POGO = ../ToolChains/pogoplug-gcc/bin/
 PATH_LINARO = ../ToolChains/linaro-arm/bin/
@@ -102,14 +104,14 @@ OBJECTS = $(patsubst %.c,%.o, $(SOURCES))
 CC = gcc
 STRIP = strip
 
-# Need to be separate for dependency generation	
+# Need to be separate for dependency generation
 INCDIRS = -I. -Iopenssl/include -Imicrostack -Imicroscript -Imeshcore -Imeshconsole
 
 # Compiler and linker flags
 CFLAGS ?= -std=gnu99 -g -Wall -D_POSIX -DMICROSTACK_PROXY $(CWEBLOG) $(CWATCHDOG) -fno-strict-aliasing $(INCDIRS) -DDUK_USE_DEBUGGER_SUPPORT -DDUK_USE_INTERRUPT_COUNTER -DDUK_USE_DEBUGGER_INSPECT -DDUK_USE_DEBUGGER_PAUSE_UNCAUGHT
 LDFLAGS ?= -L. -lpthread -ldl -lutil -lm
 CEXTRA = -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -fstack-protector -fno-strict-aliasing
-LDEXTRA = 
+LDEXTRA =
 
 
 SKIPFLAGS = 0
@@ -150,18 +152,32 @@ KVM = 1
 LMS = 0
 endif
 
-# Official Linux MIPS
+# Official Linux MIPSel
 ifeq ($(ARCHID),7)
 ARCHNAME = mips
 CC = $(PATH_MIPS)mipsel-linux-gcc
 STRIP = $(PATH_MIPS)mipsel-linux-strip
 CEXTRA = -D_FORTIFY_SOURCE=2 -D_NOILIBSTACKDEBUG -D_NOFSWATCHER -Wformat -Wformat-security -fno-strict-aliasing
-CFLAGS += -DBADMATH 
+CFLAGS += -DBADMATH
 IPADDR_MONITOR_DISABLE = 1
 IFADDR_DISABLE = 1
 KVM = 0
 LMS = 0
 endif
+
+# CVE Linux MIPS
+ifeq ($(ARCHID),8)
+ARCHNAME = mips
+CC = $(PATH_MIPS)mips-buildroot-linux-uclibc-gcc
+STRIP = $(PATH_MIPS)mips-buildroot-linux-uclibc-strip
+CEXTRA = -D_FORTIFY_SOURCE=2 -D_NOILIBSTACKDEBUG -D_NOFSWATCHER -Wformat -Wformat-security -fno-strict-aliasing
+CFLAGS += -DBADMATH
+IPADDR_MONITOR_DISABLE = 1
+IFADDR_DISABLE = 1
+KVM = 0
+LMS = 0
+endif
+
 
 # Official Linux ARM
 ifeq ($(ARCHID),9)
@@ -170,7 +186,7 @@ CC = $(PATH_ARM5)arm-none-linux-gnueabi-gcc
 STRIP = $(PATH_ARM5)arm-none-linux-gnueabi-strip
 KVM = 0
 LMS = 0
-CFLAGS += -D_NOFSWATCHER 
+CFLAGS += -D_NOFSWATCHER
 CEXTRA = -fno-strict-aliasing
 endif
 
@@ -230,8 +246,8 @@ CC = $(PATH_LINARO)arm-linux-gnueabihf-gcc
 STRIP = $(PATH_LINARO)arm-linux-gnueabihf-strip
 KVM = 0
 LMS = 0
-CFLAGS += -D_NOFSWATCHER 
-CEXTRA = -fno-strict-aliasing 
+CFLAGS += -D_NOFSWATCHER
+CEXTRA = -fno-strict-aliasing
 endif
 
 # Official Linux ARM 32bit HardFloat
@@ -241,8 +257,8 @@ CC = arm-linux-gnueabihf-gcc
 STRIP = arm-linux-gnueabihf-strip
 KVM = 1
 LMS = 0
-CFLAGS += -D_NOFSWATCHER 
-CEXTRA = -fno-strict-aliasing 
+CFLAGS += -D_NOFSWATCHER
+CEXTRA = -fno-strict-aliasing
 endif
 
 ifeq ($(WEBLOG),1)
@@ -279,7 +295,7 @@ endif
 ifeq ($(NOTLS),1)
 SOURCES += microstack/nossl/sha384-512.c microstack/nossl/sha224-256.c microstack/nossl/md5.c microstack/nossl/sha1.c
 CFLAGS += -DMICROSTACK_NOTLS
-LINUXSSL = 
+LINUXSSL =
 MACSSL =
 else
 LINUXSSL = -Lopenssl/libstatic/linux/$(ARCHNAME)
@@ -290,7 +306,7 @@ endif
 
 ifeq ($(DEBUG),1)
 # Debug Build, include Symbols
-CFLAGS += -g -D_DEBUG 
+CFLAGS += -g -D_DEBUG
 STRIP = $(NOECHO) $(NOOP)
 else
 CFLAGS += -Os
@@ -391,5 +407,3 @@ linux:
 macos:
 	$(MAKE) $(MAKEFILE) EXENAME="$(EXENAME)_$(ARCHNAME)" ADDITIONALSOURCES="$(MACOSKVMSOURCES)" CFLAGS="-arch x86_64 -mmacosx-version-min=10.5 -std=gnu99 -Os -Wall -DMESH_AGENTID=$(ARCHID) -D_POSIX -D_NOILIBSTACKDEBUG -D_NOHECI -DMICROSTACK_PROXY -D__APPLE__ $(CWEBLOG) -fno-strict-aliasing $(INCDIRS) $(CFLAGS) $(CEXTRA)" LDFLAGS="$(MACSSL) $(MACOSFLAGS) -L. -lpthread -ldl -lz -lutil -framework IOKit -framework ApplicationServices -framework SystemConfiguration -framework CoreFoundation -fconstant-cfstrings $(LDFLAGS) $(LDEXTRA)"
 	$(STRIP)
-
-

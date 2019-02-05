@@ -98,8 +98,8 @@ MESH_VER = 194
 EXENAME = meshagent
 
 # Cross-compiler paths
-PATH_MIPS = ../ToolChains/ddwrt/3.4.6-uclibc-0.9.28/bin/
-#PATH_MIPS = ../MeshAgent/toolchains/mips32/bin/
+#PATH_MIPS = ../ToolChains/ddwrt/3.4.6-uclibc-0.9.28/bin/
+PATH_MIPS = ../MeshAgent/toolchains/mips32/bin/
 PATH_ARM5 = ../ToolChains/LinuxArm/bin/
 #PATH_ARM5 = ../MeshAgent/toolchains/arm5/bin/
 PATH_POGO = ../ToolChains/pogoplug-gcc/bin/
